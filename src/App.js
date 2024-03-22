@@ -1,9 +1,8 @@
 import './App.css';
-import Effects from './routes/effects/effects.component';
-import Consultation from './routes/consultation/consultation.component';
+import MedicineList from './routes/medicinelist/medicinelist.component';
 function App() {
   return (
-    <Effects/>
+    <MedicineList/>
   );
 }
 
