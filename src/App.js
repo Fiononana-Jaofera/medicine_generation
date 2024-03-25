@@ -1,8 +1,9 @@
 import './App.css';
-import MedicineList from './routes/medicinelist/medicinelist.component';
+import Symptoms from './routes/symptoms/symptoms.component';
+
 function App() {
   return (
-    <MedicineList/>
+    <Symptoms/>
   );
 }
 
