@@ -4,7 +4,7 @@ import Form from '../../components/form/form.component';
 const Consultation = () => {
     const effects = ['e1', 'e2'];
     return (
-        <div>
+        <div style={{padding: '40px'}}>
             <Form
                 labels={effects}
                 title={"Maladies"}
