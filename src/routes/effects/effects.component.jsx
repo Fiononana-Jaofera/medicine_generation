@@ -10,7 +10,7 @@ const Effects = () => {
         ['m2', 2, 3, update_button, delete_button]
     ]
     return (
-        <div>
+        <div style={{padding: '40px'}}>
             <h2>Les effets des médicaments sur chaque symptômes</h2>
             <BasicTable
                 headers={headers}
