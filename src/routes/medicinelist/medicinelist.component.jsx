@@ -21,6 +21,7 @@ const MedicineList = () => {
     const headers = ['Médicaments', 'Prix'];
     const [name, setName] = React.useState("");
     const [price, setPrice] = React.useState(0);
+    const [id, setId] = React.useState(0);
 
     React.useEffect(() => {
         MedicineDataService.getall().then(res => {
@@ -30,7 +31,7 @@ const MedicineList = () => {
         });
     }, [])
 
-    const handleSubmit = (id) => {
+    const handleSubmit = () => {
         if (isAdd) {
             MedicineDataService.createMedicine({
                 "name": name,
@@ -41,7 +42,9 @@ const MedicineList = () => {
             MedicineDataService.updateMedicine(id, {
                 "name": name,
                 "price": price,
-            }).then(res => setIsUpdate(!isUpdate)).catch(e => console.log(e));
+            }).then(res => {
+                setIsUpdate(!isUpdate);
+            }).catch(e => console.log(e));
         }
     }
 
@@ -66,6 +69,7 @@ const MedicineList = () => {
     }
 
     const handleRowClick = (row) => {
+        setId(row.id)
         setName(row.name);
         setPrice(row.price);
         setIsUpdate(!isUpdate);
@@ -91,7 +95,7 @@ const MedicineList = () => {
                                 <TableCell onClick={() => handleRowClick(row)}>{row.name}</TableCell>
                                 <TableCell onClick={() => handleRowClick(row)}>{row.price}</TableCell>
                                 <TableCell>
-                                    <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(row.name)}>
+                                    <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(row.id)}>
                                         <DeleteIcon />
                                     </IconButton>
                                 </TableCell>
@@ -130,7 +134,7 @@ const MedicineList = () => {
                     onChange={onChangePrice}
                     value={price}
                     variant="outlined" />
-                <Button variant='contained' type='submit' color="success" onClick={() => handleSubmit(name)}>Enregistrer</Button>
+                <Button variant='contained' type='submit' color="success" onClick={handleSubmit}>Enregistrer</Button>
             </Box> : <Button variant="contained" onClick={() => setIsAdd(!isAdd)}>Ajouter</Button>}
 
         </div>

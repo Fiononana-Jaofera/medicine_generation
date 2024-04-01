@@ -4,7 +4,6 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import IconButton from '@mui/material/IconButton';
-import Grid from '@mui/material/Grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
 import SymptomDataService from "../../services/symptoms";
@@ -13,7 +12,9 @@ import TextField from '@mui/material/TextField';
 export default function Symptoms() {
   const [symptoms, setSymptoms] = React.useState([]);
   const [name, setName] = React.useState("");
-  const [isAdd, setIsAdd] = React.useState(false)
+  const [id, setId] = React.useState(0);
+  const [isAdd, setIsAdd] = React.useState(false);
+  const [isUpdate, setIsUpdate] = React.useState(false);
 
   React.useEffect(() => {
     SymptomDataService.getall().then(res => {
@@ -24,9 +25,16 @@ export default function Symptoms() {
   }, [])
 
   const handleSubmit = () => {
-    SymptomDataService.createSymptom({
-      "name": name,
-    }).then(() => setIsAdd(!isAdd)).catch(e => console.log(e));
+    if (isAdd) {
+      SymptomDataService.createSymptom({
+        "name": name,
+      }).then(() => setIsAdd(!isAdd)).catch(e => console.log(e));
+    }
+    else if (isUpdate) {
+      SymptomDataService.updateSymptom(id, {
+        "name": name
+      }).then(() => setIsUpdate(!isUpdate)).catch(e => console.log(e));
+    }
   }
 
   const handleDelete = (id) => {
@@ -44,26 +52,33 @@ export default function Symptoms() {
     setName(name)
   }
 
+  const handleRowClick = (row) => {
+    setId(row.id);
+    setName(row.name);
+    setIsUpdate(!isUpdate);
+  }
 
   return (
     <Box style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
       <List>
-        <h4 style={{textAlign: 'center'}}>Liste des symptômes :</h4>
-        {symptoms.map((e, idx) => <ListItem
+        <h4 style={{ textAlign: 'center' }}>Liste des symptômes :</h4>
+        {symptoms.map((row, idx) => <ListItem
           secondaryAction={
-            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(e.name)}>
+            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(row.id)}>
               <DeleteIcon />
             </IconButton>
           }
           key={idx}
+          sx={{ ":hover": { backgroundColor: "#e0e0e0", cursor:"pointer" } }}
         >
           <ListItemText
-            primary={e.name}
-            sx={{minWidth: '100px'}}
+            primary={row.name}
+            sx={{ minWidth: '100px' }}
+            onClick={() => handleRowClick(row)}
           />
         </ListItem>)}
       </List>
-      {isAdd ? <Box
+      {isAdd || isUpdate ? <Box
         component="form"
         noValidate
         autoComplete="off"

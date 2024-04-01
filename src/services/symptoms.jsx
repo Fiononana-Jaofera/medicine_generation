@@ -8,7 +8,10 @@ class SymptomDataService {
         return axios.post("http://127.0.0.1:8000/api/symptoms/", data);
     }
     deleteSymptom(id) {
-        return axios.delete(`http://127.0.0.1:8000/api/symptoms/${id}/`)
+        return axios.delete(`http://127.0.0.1:8000/api/symptoms/${id}/`);
+    }
+    updateSymptom(id, data) {
+        return axios.put(`http://127.0.0.1:8000/api/symptoms/${id}/`, data);
     }
 }
 
