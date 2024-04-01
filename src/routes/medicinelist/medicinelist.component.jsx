@@ -16,7 +16,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 const MedicineList = () => {
     const [medicines, setMedicines] = React.useState([]);
-    const [isAdd, setIsAdd] = React.useState(false)
+    const [isAdd, setIsAdd] = React.useState(false);
+    const [isUpdate, setIsUpdate] = React.useState(false);
     const headers = ['Médicaments', 'Prix'];
     const [name, setName] = React.useState("");
     const [price, setPrice] = React.useState(0);
@@ -29,11 +30,19 @@ const MedicineList = () => {
         });
     }, [])
 
-    const handleSubmit = () => {
-        MedicineDataService.createMedicine({
-            "name": name,
-            "price": price,
-        }).then(res => setIsAdd(!isAdd)).catch(e => console.log(e));
+    const handleSubmit = (id) => {
+        if (isAdd) {
+            MedicineDataService.createMedicine({
+                "name": name,
+                "price": price,
+            }).then(res => setIsAdd(!isAdd)).catch(e => console.log(e));
+        }
+        else if (isUpdate) {
+            MedicineDataService.updateMedicine(id, {
+                "name": name,
+                "price": price,
+            }).then(res => setIsUpdate(!isUpdate)).catch(e => console.log(e));
+        }
     }
 
     const handleDelete = (id) => {
@@ -56,6 +65,12 @@ const MedicineList = () => {
         setPrice(price)
     }
 
+    const handleRowClick = (row) => {
+        setName(row.name);
+        setPrice(row.price);
+        setIsUpdate(!isUpdate);
+    }
+
     return (
         <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
 
@@ -69,18 +84,24 @@ const MedicineList = () => {
                     </TableHead>
                     <TableBody>
                         {medicines.map((row, id_r) => (
-                            <TableRow key={id_r}>
-                                <TableCell>{row.name}</TableCell>
-                                <TableCell>{row.price}</TableCell>
-                                <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(row.name)}>
-                                    <DeleteIcon />
-                                </IconButton>
+                            <TableRow
+                                key={id_r}
+                                sx={{ ":hover": { backgroundColor: "#e0e0e0" }, cursor: "pointer" }}
+                            >
+                                <TableCell onClick={() => handleRowClick(row)}>{row.name}</TableCell>
+                                <TableCell onClick={() => handleRowClick(row)}>{row.price}</TableCell>
+                                <TableCell>
+                                    <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(row.name)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </TableCell>
+
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            {isAdd ? <Box
+            {isAdd || isUpdate ? <Box
                 component="form"
                 noValidate
                 autoComplete="off"
@@ -109,7 +130,7 @@ const MedicineList = () => {
                     onChange={onChangePrice}
                     value={price}
                     variant="outlined" />
-                <Button variant='contained' type='submit' color="success" onClick={handleSubmit}>Enregistrer</Button>
+                <Button variant='contained' type='submit' color="success" onClick={() => handleSubmit(name)}>Enregistrer</Button>
             </Box> : <Button variant="contained" onClick={() => setIsAdd(!isAdd)}>Ajouter</Button>}
 
         </div>
