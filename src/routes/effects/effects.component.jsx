@@ -1,5 +1,4 @@
 import Button from '@mui/material/Button';
-import Form from "../../components/form/form.component";
 import React from "react";
 import EffectDataServices from "./../../services/effects";
 
@@ -11,12 +10,17 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 const Effects = () => {
     const [effects, setEffects] = React.useState([]);
     const [headers, setHeaders] = React.useState([]);
     const [medicines, setMedicines] = React.useState([]);
+    const [medicine, setMedicine] = React.useState("");
     const [symptoms, setSymptoms] = React.useState([]);
+    const [isUpdate, setIsUpdated] = React.useState(false);
+    const [formData, setFormData] = React.useState([]);
 
     const findEffectByMedicineAndSymptom = (medicine, symptom) => {
         return effects.find(obj => obj.medicine_id == medicine && obj.symptom_id == symptom)['effect'];
@@ -42,6 +46,12 @@ const Effects = () => {
         setHeaders(["Médicaments"].concat(symptoms));
     }, [effects]);
 
+    const handleRowClick = (id) => {
+        setIsUpdated(true);
+        setMedicine(id);
+        EffectDataServices.getall(id).then(res => setFormData(res.data)).catch(e => console.log(e));
+    }
+
     return (
         <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
             <TableContainer component={Paper} style={{ width: '70%' }}>
@@ -53,25 +63,11 @@ const Effects = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {/* {effects.map((row, id_r) => (
-                            <TableRow
-                                key={id_r}
-                                sx={{ ":hover": { backgroundColor: "#e0e0e0" }, cursor: "pointer" }}
-                            >
-                                <TableCell onClick={() => handleRowClick(row)}>{row.name}</TableCell>
-                                <TableCell onClick={() => handleRowClick(row)}>{row.price}</TableCell>
-                                <TableCell>
-                                    <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(row.id)}>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </TableCell>
-
-                            </TableRow>
-                        ))} */}
                         {medicines.map((m, id_r)=>(
                             <TableRow
                                 key={id_r}
                                 sx={{":hover": {backgroundColor: "#e0e0e0"}, cursor: "pointer"}}
+                                onClick={() => handleRowClick(m)}
                             >
                                 <TableCell>{m}</TableCell>
                                 {symptoms.map((s, id_c)=>(
@@ -84,13 +80,36 @@ const Effects = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {/* <Form
-                title="Médicaments"
-                labels={['s1', 's2']}
-                button={{
-                    color: 'success',
-                    text: 'Enregistrer'
-                }} /> */}
+            {isUpdate ? <Box
+                component="form"
+                noValidate
+                autoComplete="off"
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '20px'
+                }}
+            >
+                <h4>{medicine}</h4>
+                {formData.map((f) => (
+                    <TextField
+                        key={f.id}
+                        id="outlined-basic"
+                        type="number"
+                        label={f.symptom_id}
+                        onChange={() => console.log('value changed')}
+                        value={f.effect}
+                        name={f.symptom_id}
+                        variant="outlined"
+                        required />
+                ))}
+                <Button variant='contained' type='submit' color="success" onClick={() => console.log("submit")}>Enregistrer</Button>
+                <Button variant='contained' type='reset' color="error" onClick={() => {
+                    setIsUpdated(false);
+                    setMedicine("");
+                }}>Annuler</Button>
+            </Box>: ""}
         </div>
     )
 }
