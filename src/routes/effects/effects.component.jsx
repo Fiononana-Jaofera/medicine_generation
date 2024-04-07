@@ -18,6 +18,10 @@ const Effects = () => {
     const [medicines, setMedicines] = React.useState([]);
     const [symptoms, setSymptoms] = React.useState([]);
 
+    const findEffectByMedicineAndSymptom = (medicine, symptom) => {
+        return effects.find(obj => obj.medicine_id == medicine && obj.symptom_id == symptom)['effect'];
+    }
+
     React.useEffect(() => {
         EffectDataServices.getall().then(res => {
             setEffects(res.data);
@@ -29,11 +33,11 @@ const Effects = () => {
     React.useEffect(() => {
         const allMedicines = effects.map(e => e.medicine_id);
         const uniqueMedicines = [...new Set(allMedicines)];
-        setMedicines(uniqueMedicines.reverse());
+        setMedicines(uniqueMedicines);
 
         const allSymptoms = effects.map(e => e.symptom_id);
         const uniqueSymptoms = [...new Set(allSymptoms)];
-        setSymptoms(uniqueSymptoms.reverse());
+        setSymptoms(uniqueSymptoms);
 
         setHeaders(["Médicaments"].concat(symptoms));
     }, [effects]);
@@ -49,7 +53,7 @@ const Effects = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {effects.map((row, id_r) => (
+                        {/* {effects.map((row, id_r) => (
                             <TableRow
                                 key={id_r}
                                 sx={{ ":hover": { backgroundColor: "#e0e0e0" }, cursor: "pointer" }}
@@ -62,6 +66,19 @@ const Effects = () => {
                                     </IconButton>
                                 </TableCell>
 
+                            </TableRow>
+                        ))} */}
+                        {medicines.map((m, id_r)=>(
+                            <TableRow
+                                key={id_r}
+                                sx={{":hover": {backgroundColor: "#e0e0e0"}, cursor: "pointer"}}
+                            >
+                                <TableCell>{m}</TableCell>
+                                {symptoms.map((s, id_c)=>(
+                                    <TableCell key={id_c}>
+                                        {findEffectByMedicineAndSymptom(m, s)}
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         ))}
                     </TableBody>
