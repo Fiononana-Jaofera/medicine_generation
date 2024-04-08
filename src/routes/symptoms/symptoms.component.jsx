@@ -28,12 +28,12 @@ export default function Symptoms() {
     if (isAdd) {
       SymptomDataService.createSymptom({
         "name": name,
-      }).then(() => setIsAdd(!isAdd)).catch(e => console.log(e));
+      }).then(() => setIsAdd(false)).catch(e => console.log(e));
     }
     else if (isUpdate) {
       SymptomDataService.updateSymptom(id, {
         "name": name
-      }).then(() => setIsUpdate(!isUpdate)).catch(e => console.log(e));
+      }).then(() => setIsUpdate(false)).catch(e => console.log(e));
     }
   }
 
@@ -55,7 +55,7 @@ export default function Symptoms() {
   const handleRowClick = (row) => {
     setId(row.id);
     setName(row.name);
-    setIsUpdate(!isUpdate);
+    setIsUpdate(true);
   }
 
   return (
@@ -69,7 +69,7 @@ export default function Symptoms() {
             </IconButton>
           }
           key={idx}
-          sx={{ ":hover": { backgroundColor: "#e0e0e0", cursor:"pointer" } }}
+          sx={{ ":hover": { backgroundColor: "#e0e0e0", cursor: "pointer" } }}
         >
           <ListItemText
             primary={row.name}
@@ -99,8 +99,14 @@ export default function Symptoms() {
           name="name"
           variant="outlined"
           required />
-        <Button variant='contained' type='submit' color="success" onClick={handleSubmit}>Enregistrer</Button>
-      </Box> : <Button variant="contained" onClick={() => setIsAdd(!isAdd)}>Ajouter</Button>}
+        <span style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
+          <Button variant='contained' type='submit' color="success" onClick={handleSubmit}>Enregistrer</Button>
+          <Button variant='contained' type='reset' color="error" onClick={() =>{
+            setIsAdd(false);
+            setIsUpdate(false);
+          }}>Annuler</Button>
+        </span>
+      </Box> : <Button variant="contained" onClick={() => setIsAdd(true)}>Ajouter</Button>}
     </Box>
   );
 }

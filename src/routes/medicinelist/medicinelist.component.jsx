@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Button } from "@mui/material";
 import MedicineDataService from '../../services/medicines';
 
@@ -78,7 +78,7 @@ const MedicineList = () => {
     }
 
     return (
-        <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
+        <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
 
             <TableContainer component={Paper} style={{ width: '70%' }}>
                 <h4 style={{ textAlign: 'center' }}>Liste des médicaments</h4>
@@ -107,37 +107,49 @@ const MedicineList = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {isAdd || isUpdate ? <Box
-                component="form"
-                noValidate
-                autoComplete="off"
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '20px'
-                }}
-            >
-                <h4>Nouveau médicament :</h4>
-                <TextField
-                    id="outlined-basic"
-                    type="text"
-                    label="Nom"
-                    onChange={onChangeName}
-                    value={name}
-                    name="name"
-                    variant="outlined"
-                    required />
-                <TextField
-                    id="outlined-basic"
-                    type="number"
-                    label="Prix"
-                    name="price"
-                    onChange={onChangePrice}
-                    value={price}
-                    variant="outlined" />
-                <Button variant='contained' type='submit' color="success" onClick={handleSubmit}>Enregistrer</Button>
-            </Box> : <Button variant="contained" onClick={() => setIsAdd(!isAdd)}>Ajouter</Button>}
+            {isAdd || isUpdate ?
+
+                <Fragment>
+                    <h4>Nouveau médicament :</h4>
+                    <Box
+                        component="form"
+                        noValidate
+                        autoComplete="off"
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: '10px'
+                        }}
+                    >
+                        <TextField
+                            id="outlined-basic"
+                            type="text"
+                            label="Nom"
+                            onChange={onChangeName}
+                            value={name}
+                            name="name"
+                            variant="outlined"
+                            required />
+                        <TextField
+                            id="outlined-basic"
+                            type="number"
+                            label="Prix"
+                            name="price"
+                            onChange={onChangePrice}
+                            value={price}
+                            variant="outlined" />
+                    </Box>
+                    <span style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                        <Button variant='contained' type='submit' color="success" onClick={handleSubmit}>Enregistrer</Button>
+                        <Button variant='contained' type='reset' color="error" onClick={() => {
+                            setIsAdd(false);
+                            setIsUpdate(false);
+                        }}>Annuler</Button>
+                    </span>
+                </Fragment>
+
+                : <Button variant="contained" onClick={() => setIsAdd(!isAdd)}>Ajouter</Button>}
 
         </div>
     )

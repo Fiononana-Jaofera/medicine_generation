@@ -7,9 +7,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-const BasicTable = ({headers, body}) => {
+const BasicTable = ({headers, body, title}) => {
     return (
         <TableContainer component={Paper}>
+            <h4 style={{ textAlign: 'center' }}>{title}</h4>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>

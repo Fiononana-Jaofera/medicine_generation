@@ -1,10 +1,3 @@
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import { Button } from "@mui/material";
 
 import BasicTable from '../../components/table/table.component';
@@ -41,16 +34,16 @@ const Consultation = () => {
         e.preventDefault();
         ConsultationDataService.postMaladie(formData)
             .then(res => {
-               let data = res.data;
-               let temp = [];
-               let total = 0;
-               data.forEach(d => {
-                total = total + (d.price * d.count);
-                temp.push([d.medicine, d.price, d.count, (d.price * d.count)]);
-               })
-               temp.push(['','','Prix total', total]);
-               setGetResult(temp);
-               setDisplayTable(true);
+                let data = res.data;
+                let temp = [];
+                let total = 0;
+                data.forEach(d => {
+                    total = total + (d.price * d.count);
+                    temp.push([d.medicine, d.price, d.count, (d.price * d.count)]);
+                })
+                temp.push(['', '', 'Prix total', total]);
+                setGetResult(temp);
+                setDisplayTable(true);
             })
             .catch(e => console.log(e));
     }
@@ -71,19 +64,19 @@ const Consultation = () => {
 
 
     return (
-        <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
+        <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+            <h4>Maladies :</h4>
             <Box
                 component="form"
                 noValidate
                 autoComplete="off"
                 sx={{
                     display: 'flex',
-                    flexDirection: 'column',
+                    flexDirection: 'row',
                     alignItems: 'center',
-                    gap: '20px'
+                    gap: '40px'
                 }}
             >
-                <h4>Maladies :</h4>
 
                 {symptoms.map((s, id_s) => <TextField
                     key={id_s}
@@ -94,13 +87,16 @@ const Consultation = () => {
                     onChange={(e) => handleOnChange(e, s.name)}
                     name={s.name}
                     variant="outlined"
+                    size="small"
+                    sx={{width: '100px'}}
                     required />)}
-                <Button variant='contained' type='submit' color="success" onClick={handleOnSubmit}>Consulter</Button>
             </Box>
-            {displayTable? (
-            <BasicTable
-                headers={headers}
-                body={getResult} />): ""}
+            <Button variant='contained' type='submit' color="success" onClick={handleOnSubmit}>Consulter</Button>
+            {displayTable ? (
+                <BasicTable
+                    title={"Résultats :"}
+                    headers={headers}
+                    body={getResult} />) : ""}
         </div>
     );
 }

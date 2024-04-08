@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button';
-import React from "react";
+import React, { Fragment } from "react";
 import EffectDataServices from "./../../services/effects";
 
 import Table from '@mui/material/Table';
@@ -53,25 +53,30 @@ const Effects = () => {
     }
 
     const handleOnSubmit = () => {
-        EffectDataServices.updateEffect(formData).then(() => setIsUpdated(false)).catch(e => console.log(e))
+        EffectDataServices.updateEffect(formData)
+        .then(() => {
+            setIsUpdated(false);
+            location.reload();
+        })
+        .catch(e => console.log(e))
     }
-    
-    const  handleOnChange = (e, id) => {
-        const value = Number(e.target.value); 
+
+    const handleOnChange = (e, id) => {
+        const value = Number(e.target.value);
         let temp = [];
         formData.forEach(f => {
-            if (id == f.id){
-                temp.push({'id': f.id, 'medicine_id': f.medicine_id, 'symptom_id': f.symptom_id, 'effect': value});
+            if (id == f.id) {
+                temp.push({ 'id': f.id, 'medicine_id': f.medicine_id, 'symptom_id': f.symptom_id, 'effect': value });
             }
             else {
-                temp.push({'id': f.id, 'medicine_id': f.medicine_id, 'symptom_id': f.symptom_id, 'effect': f.effect});
+                temp.push({ 'id': f.id, 'medicine_id': f.medicine_id, 'symptom_id': f.symptom_id, 'effect': f.effect });
             }
         })
         setFormData(temp);
     }
 
     return (
-        <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
+        <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
             <TableContainer component={Paper} style={{ width: '70%' }}>
                 <h4 style={{ textAlign: 'center' }}>Les effets des médicaments sur chaque symptômes</h4>
                 <Table aria-label="simple table">
@@ -81,14 +86,14 @@ const Effects = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {medicines.map((m, id_r)=>(
+                        {medicines.map((m, id_r) => (
                             <TableRow
                                 key={id_r}
-                                sx={{":hover": {backgroundColor: "#e0e0e0"}, cursor: "pointer"}}
+                                sx={{ ":hover": { backgroundColor: "#e0e0e0" }, cursor: "pointer" }}
                                 onClick={() => handleRowClick(m)}
                             >
                                 <TableCell>{m}</TableCell>
-                                {symptoms.map((s, id_c)=>(
+                                {symptoms.map((s, id_c) => (
                                     <TableCell key={id_c}>
                                         {findEffectByMedicineAndSymptom(m, s)}
                                     </TableCell>
@@ -98,37 +103,45 @@ const Effects = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {isUpdate ? <Box
-                component="form"
-                noValidate
-                autoComplete="off"
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '20px'
-                }}
-            >
-                <h4>{medicine}</h4>
-                {formData.map((f) => (
-                    <TextField
-                        key={f.id}
-                        id="outlined-basic"
-                        type="number"
-                        label={f.symptom_id}
-                        onChange={(e) => handleOnChange(e, f.id)}
-                        value={f.effect}
-                        name={f.symptom_id}
-                        variant="outlined"
-                        inputProps={{ min: 0 }}
-                        required />
-                ))}
-                <Button variant='contained' type='submit' color="success" onClick={handleOnSubmit}>Enregistrer</Button>
-                <Button variant='contained' type='reset' color="error" onClick={() => {
-                    setIsUpdated(false);
-                    setMedicine("");
-                }}>Annuler</Button>
-            </Box>: ""}
+            {isUpdate ?
+                <Fragment>
+                    <h4>{medicine}</h4>
+                    <Box
+                        component="form"
+                        noValidate
+                        autoComplete="off"
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: '40px'
+                        }}
+                    >
+                        {formData.map((f) => (
+                            <TextField
+                                key={f.id}
+                                id="outlined-basic"
+                                type="number"
+                                label={f.symptom_id}
+                                onChange={(e) => handleOnChange(e, f.id)}
+                                value={f.effect}
+                                name={f.symptom_id}
+                                variant="outlined"
+                                inputProps={{ min: 0 }}
+                                size="small"
+                                sx={{ width: '100px' }}
+                                required />
+                        ))}
+                    </Box>
+                    <span style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                        <Button variant='contained' type='submit' color="success" onClick={handleOnSubmit}>Enregistrer</Button>
+                        <Button variant='contained' type='reset' color="error" onClick={() => {
+                            setIsUpdated(false);
+                            setMedicine("");
+                        }}>Annuler</Button>
+                    </span>
+                </Fragment>
+                : ""}
         </div>
     )
 }
