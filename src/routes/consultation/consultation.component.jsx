@@ -1,21 +1,106 @@
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { Button } from "@mui/material";
+
 import BasicTable from '../../components/table/table.component';
-import Form from '../../components/form/form.component';
+
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import React from 'react';
+
+import SymptomDataService from '../../services/symptoms';
+import ConsultationDataService from '../../services/consultation';
 
 const Consultation = () => {
-    const effects = ['e1', 'e2'];
+    const [symptoms, setSymptoms] = React.useState([]);
+    const [formData, setFormData] = React.useState([]);
+    const [getResult, setGetResult] = React.useState([]);
+    const [displayTable, setDisplayTable] = React.useState(false);
+    const headers = ['Médicaments', 'Prix Unitaire', 'Quantité', 'Total'];
+
+    React.useEffect(() => {
+        SymptomDataService.getall()
+            .then(res => setSymptoms(res.data))
+            .catch(e => console.log(e));
+    }, [])
+
+    React.useEffect(() => {
+        let temp = []
+        symptoms.forEach(s => {
+            temp.push({ "id": s.id, 'maladie': s.name, 'degre': 0 });
+        })
+        setFormData(temp);
+    }, [symptoms]);
+
+    const handleOnSubmit = (e) => {
+        e.preventDefault();
+        ConsultationDataService.postMaladie(formData)
+            .then(res => {
+               let data = res.data;
+               let temp = [];
+               let total = 0;
+               data.forEach(d => {
+                total = total + (d.price * d.count);
+                temp.push([d.medicine, d.price, d.count, (d.price * d.count)]);
+               })
+               temp.push(['','','Prix total', total]);
+               setGetResult(temp);
+               setDisplayTable(true);
+            })
+            .catch(e => console.log(e));
+    }
+
+    const handleOnChange = (e, name) => {
+        const value = Number(e.target.value);
+        let temp = [];
+        formData.forEach(f => {
+            if (name == f.maladie) {
+                temp.push({ "id": f.id, 'maladie': f.maladie, 'degre': value });
+            }
+            else {
+                temp.push({ "id": f.id, 'maladie': f.maladie, 'degre': f.degre });
+            }
+        })
+        setFormData(temp);
+    }
+
+
     return (
-        <div style={{padding: '40px'}}>
-            <Form
-                labels={effects}
-                title={"Maladies"}
-                button={{
-                    color: 'success',
-                    text: 'Consulter'
-                }} />
-            <h2>Résultat :</h2>
+        <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
+            <Box
+                component="form"
+                noValidate
+                autoComplete="off"
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '20px'
+                }}
+            >
+                <h4>Maladies :</h4>
+
+                {symptoms.map((s, id_s) => <TextField
+                    key={id_s}
+                    id="outlined-basic"
+                    type="number"
+                    inputProps={{ min: 0 }}
+                    label={s.name}
+                    onChange={(e) => handleOnChange(e, s.name)}
+                    name={s.name}
+                    variant="outlined"
+                    required />)}
+                <Button variant='contained' type='submit' color="success" onClick={handleOnSubmit}>Consulter</Button>
+            </Box>
+            {displayTable? (
             <BasicTable
-                headers={['Médicaments', 'Prix Unitaire', 'Quantité', 'Total']}
-                body={[['m1', 100, 3, 300], ['m2', 100, 1, 100], ['', '', '', 400]]} />
+                headers={headers}
+                body={getResult} />): ""}
         </div>
     );
 }
