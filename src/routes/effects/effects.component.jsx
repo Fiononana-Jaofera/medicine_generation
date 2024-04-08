@@ -52,6 +52,24 @@ const Effects = () => {
         EffectDataServices.getall(id).then(res => setFormData(res.data)).catch(e => console.log(e));
     }
 
+    const handleOnSubmit = () => {
+        EffectDataServices.updateEffect(formData).then(() => setIsUpdated(false)).catch(e => console.log(e))
+    }
+    
+    const  handleOnChange = (e, id) => {
+        const value = Number(e.target.value); 
+        let temp = [];
+        formData.forEach(f => {
+            if (id == f.id){
+                temp.push({'id': f.id, 'medicine_id': f.medicine_id, 'symptom_id': f.symptom_id, 'effect': value});
+            }
+            else {
+                temp.push({'id': f.id, 'medicine_id': f.medicine_id, 'symptom_id': f.symptom_id, 'effect': f.effect});
+            }
+        })
+        setFormData(temp);
+    }
+
     return (
         <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
             <TableContainer component={Paper} style={{ width: '70%' }}>
@@ -98,13 +116,14 @@ const Effects = () => {
                         id="outlined-basic"
                         type="number"
                         label={f.symptom_id}
-                        onChange={() => console.log('value changed')}
+                        onChange={(e) => handleOnChange(e, f.id)}
                         value={f.effect}
                         name={f.symptom_id}
                         variant="outlined"
+                        inputProps={{ min: 0 }}
                         required />
                 ))}
-                <Button variant='contained' type='submit' color="success" onClick={() => console.log("submit")}>Enregistrer</Button>
+                <Button variant='contained' type='submit' color="success" onClick={handleOnSubmit}>Enregistrer</Button>
                 <Button variant='contained' type='reset' color="error" onClick={() => {
                     setIsUpdated(false);
                     setMedicine("");
