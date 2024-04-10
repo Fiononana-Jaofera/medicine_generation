@@ -38,7 +38,10 @@ const MedicineList = () => {
             MedicineDataService.createMedicine({
                 "name": name,
                 "price": price,
-            }).then(res => setIsAdd(!isAdd)).catch(e => console.log(e));
+            }).then(res => {
+                setIsAdd(!isAdd);
+                location.reload();
+            }).catch(e => console.log(e));
         }
         else if (isUpdate) {
             MedicineDataService.updateMedicine(id, {
@@ -46,6 +49,7 @@ const MedicineList = () => {
                 "price": price,
             }).then(res => {
                 setIsUpdate(!isUpdate);
+                location.reload();
             }).catch(e => console.log(e));
         }
     }
@@ -53,7 +57,7 @@ const MedicineList = () => {
     const handleDelete = (id) => {
         MedicineDataService.deleteMedicine(id).then(() => {
             MedicineDataService.getall().then(res => {
-                setMedicines(res.data)
+                setMedicines(res.data);
             }).catch(e => {
                 console.log(e)
             });
